@@ -1,0 +1,45 @@
+# requirements.txt
+#
+# INSTALL TORCH SEPARATELY -- it is not pinned here on purpose.
+# The right build differs per machine and a wrong one fails at runtime with
+# "no kernel image is available for execution on the device".
+#
+#   laptop (CPU only, smoke test):
+#     pip install torch --index-url https://download.pytorch.org/whl/cpu
+#
+#   T4 (Turing, sm_75):
+#     pip install torch --index-url https://download.pytorch.org/whl/cu124
+#
+#   RTX 5090 (Blackwell, sm_120) -- needs CUDA 12.8+:
+#     pip install torch --index-url https://download.pytorch.org/whl/cu128
+#
+# Then:  pip install -r requirements.txt
+
+# --- core ---
+transformers>=4.51.0
+accelerate>=1.4.0
+datasets>=3.3.0
+peft>=0.14.0              # stage 3 onward
+safetensors>=0.4.5
+sentencepiece>=0.2.0
+protobuf>=4.25.0
+
+# --- data prep ---
+pillow>=10.4.0
+numpy>=1.26.0
+huggingface_hub>=0.28.0
+
+# --- training utils ---
+tqdm>=4.66.0
+
+# --- stage 3/4 (install later, not needed for alignment) ---
+# trl>=0.15.0
+# math-verify>=0.5.0
+# sympy>=1.13.0
+# vllm>=0.8.0             # 5090: set VLLM_FLASH_ATTN_VERSION=2
+
+# --- optional, GPU only ---
+# flash-attn                # NOT on T4 (Turing unsupported -- use sdpa).
+#                           # On 5090 build from source with CUDA 12.8:
+#                           #   TORCH_CUDA_ARCH_LIST="12.0" pip install flash-attn --no-build-isolation
+# bitsandbytes>=0.45.0      # only if you want 8-bit optimizers
