@@ -101,7 +101,7 @@ def main():
         def batch_loss(rows, black=False):
             b = coll(rows)
             expected_tokens = len(rows) * args.n_visual_tokens
-            actual_tokens = int((b["input_ids"] == coll.image_id).sum())
+            actual_tokens = int((b["input_ids"] == coll.img_id).sum())
             assert actual_tokens == expected_tokens, (
                 f"batch has {actual_tokens} image tokens, "
                 f"expected {expected_tokens}"
@@ -116,7 +116,7 @@ def main():
             )
             return loss.item()
 
-        N, BS = min(args.smoke_n, len(ds)), 4
+        N, BS = min(args.smoke_n, len(ds)), 1
         if N <= 0:
             raise ValueError("--smoke_n must be greater than zero and the dataset cannot be empty")
         real, black, per_src = [], [], collections.defaultdict(list)
