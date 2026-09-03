@@ -101,7 +101,7 @@ def main():
         def batch_loss(rows, black=False):
             b = coll(rows)
             expected_tokens = len(rows) * args.n_visual_tokens
-            actual_tokens = int((b["input_ids"] == coll.img_id).sum())
+            actual_tokens = int((b["input_ids"] == coll.image_id).sum())
             assert actual_tokens == expected_tokens, (
                 f"batch has {actual_tokens} image tokens, "
                 f"expected {expected_tokens}"
