@@ -24,21 +24,29 @@ def letterbox(img):
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--n", type=int, default=60000)
-ap.add_argument("--arrow_dir", required=True)
+ap.add_argument("--arrow_dir", default=None)
 ap.add_argument("--out_dir", required=True)
 ap.add_argument("--no_filter", action="store_true")
-a = ap.parse_args()
+ap.add_argument("--cache_dir", default=None)
 
+
+a = ap.parse_args()
 out_dir = os.path.abspath(a.out_dir)
 img_dir = os.path.join(out_dir, "imgcode")
 os.makedirs(img_dir, exist_ok=True)
 print("cwd   :", os.getcwd())
 print("images:", img_dir)
 
-files = sorted(glob.glob(os.path.join(a.arrow_dir,"**","*.arrow"), recursive=True))
-if not files: raise SystemExit("no .arrow files under " + a.arrow_dir)
-print("loading", len(files), "shard(s)")
-ds = concatenate_datasets([Dataset.from_file(f) for f in files])
+if a.arrow_dir:
+    files = sorted(glob.glob(os.path.join(a.arrow_dir,"**","*.arrow"), recursive=True))
+    if not files: raise SystemExit("no .arrow files under " + a.arrow_dir)
+    print("loading", len(files), "shard(s)")
+    ds = concatenate_datasets([Dataset.from_file(f) for f in files])
+else:
+    from datasets import load_dataset
+    print("downloading from HuggingFace...")
+    ds = load_dataset("MathLLMs/ImgCode-8.6M", "Img2Python-00",
+                      split="train", cache_dir=os.environ.get("HF_HOME"))
 print("rows:", len(ds))
 
 seen_id, seen_h, out = set(), set(), []
